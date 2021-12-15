@@ -11,7 +11,7 @@ SimpleAnomalyDetector::~SimpleAnomalyDetector() {
     // TODO Auto-generated destructor stub
 }
 //Calculates the threshold and returns it
-float calculateThreshold(Line line, Point** points, int len){
+float SimpleAnomalyDetector::calculateThreshold(Line line, Point** points, int len){
     float maxThreshold = 0;
     for (int i = 0; i < len; ++i) {
         float curThreshold = abs(points[i]->y - line.f(points[i]->x));
@@ -22,7 +22,7 @@ float calculateThreshold(Line line, Point** points, int len){
     return maxThreshold;
 }
 //Returns a points created from two vectors
-Point** fromVectorToPoints(vector<float> x, vector<float> y){
+Point** SimpleAnomalyDetector::fromVectorToPoints(vector<float> x, vector<float> y){
     auto** points = new Point*[x.size()];
     for (int i = 0; i < x.size(); ++i) {
         points[i] = new Point(x[i], y[i]);
@@ -73,16 +73,12 @@ void SimpleAnomalyDetector::correlationCheck(const TimeSeries& ts, float pearson
         cf.push_back(c);
     }
 }
-//Checks if anomalous and returns bool
-bool isAnomalous(float x, float y,correlatedFeatures c){
-    return (abs(y - c.lin_reg.f(x))>c.threshold);
-}
 
 //To detect any alarms and pushes them in anomaly report
 vector<AnomalyReport> SimpleAnomalyDetector::detect(const TimeSeries& ts){
     vector<AnomalyReport> anomalyReportVec;
     //for loop overs cf vector
-    for_each(cf.begin(), cf.end(), [&anomalyReportVec, &ts](correlatedFeatures c){
+    for_each(cf.begin(), cf.end(), [&anomalyReportVec, &ts, this](correlatedFeatures c){
         vector<float> x = ts.getVectorFromMap(c.feature1);
         vector<float> y = ts.getVectorFromMap(c.feature2);
         for(int i=0; i < x.size(); i++) {
@@ -94,4 +90,9 @@ vector<AnomalyReport> SimpleAnomalyDetector::detect(const TimeSeries& ts){
     });
             return anomalyReportVec;
 }
+//Checks if anomalous and returns bool
+bool SimpleAnomalyDetector::isAnomalous(float x, float y,correlatedFeatures c){
+    return (abs(y - c.lin_reg.f(x)) > c.threshold);
+}
+
 

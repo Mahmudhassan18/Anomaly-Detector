@@ -21,7 +21,9 @@ public:
 // --------------------------------------
 
 Circle findMinCircle(Point** points,size_t size);
+float twoPointsDis(const Point& p1, const Point& p2);
+Circle minCircWelzel(vector<Point> pointsVec);
 
-// you can add here additional methods
+
 
 #endif /* MINCIRCLE_H_ */
