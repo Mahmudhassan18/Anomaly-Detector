@@ -78,7 +78,7 @@ void SimpleAnomalyDetector::correlationCheck(const TimeSeries& ts, float pearson
 vector<AnomalyReport> SimpleAnomalyDetector::detect(const TimeSeries& ts){
     vector<AnomalyReport> anomalyReportVec;
     //for loop overs cf vector
-    for_each(cf.begin(), cf.end(), [&anomalyReportVec, &ts](correlatedFeatures c){
+    for_each(cf.begin(), cf.end(), [&anomalyReportVec, &ts, this](correlatedFeatures c){
         vector<float> x = ts.getVectorFromMap(c.feature1);
         vector<float> y = ts.getVectorFromMap(c.feature2);
         for(int i=0; i < x.size(); i++) {
