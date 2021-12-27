@@ -1,6 +1,6 @@
 #include "minCircle.h"
 #include "anomaly_detection_util.h"
-
+#include <cmath>
 
 using namespace std;
 
