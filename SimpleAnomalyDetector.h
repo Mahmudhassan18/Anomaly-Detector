@@ -31,6 +31,9 @@ public:
 	vector<correlatedFeatures> getNormalModel(){
 		return cf;
 	}
+    void setCorrelationThreshold(float threshold){
+        this->threshold=threshold;
+    }
 protected:
     virtual void correlationCheck(const TimeSeries& ts, float pearson, string firstCur, string secCur, Point** points);
     virtual bool isAnomalous(float x, float y, correlatedFeatures c);

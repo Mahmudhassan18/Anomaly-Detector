@@ -4,7 +4,6 @@
 //Sets the threshold
 SimpleAnomalyDetector::SimpleAnomalyDetector() {
     threshold = 0.9;
-
 }
 
 SimpleAnomalyDetector::~SimpleAnomalyDetector() {
