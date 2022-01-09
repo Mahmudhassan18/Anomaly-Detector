@@ -6,6 +6,8 @@ CLI::CLI(DefaultIO* dio) {
     commands.push_back(new AlgorithmSettings(dio));
     commands.push_back(new Detect(dio));
     commands.push_back(new Results(dio));
+    commands.push_back(new AnomalyUpload(dio));
+    commands.push_back(new Exit(dio));
 }
 
 void CLI::start(){

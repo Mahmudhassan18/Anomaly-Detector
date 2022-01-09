@@ -66,8 +66,8 @@ void SimpleAnomalyDetector::correlationCheck(const TimeSeries& ts, float pearson
         correlatedFeatures c;
         c.feature1 = firstCur;
         c.feature2 = secCur;
-        c.corrlation=pearson;
-        c.lin_reg=linear_reg(points, len);
+        c.correlation = pearson;
+        c.lin_reg = linear_reg(points, len);
         c.threshold = calculateThreshold(c.lin_reg, points, len) * 1.1;
         cf.push_back(c);
     }
