@@ -56,10 +56,10 @@ class AnomalyDetectionHandler:public ClientHandler{
 
 // implement on Server.cpp
 class Server {
-	thread* t; // the thread to run the start() method in
+	thread* t{}; // the thread to run the start() method in
 	int fileDescriptor;
-	sockaddr_in server;
-	sockaddr_in client;
+	sockaddr_in server{};
+	sockaddr_in client{};
 	bool flag;
 public:
 	Server(int port) throw (const char*);
