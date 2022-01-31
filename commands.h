@@ -4,10 +4,10 @@
 #define COMMANDS_H_
 
 #include<iostream>
-#include <string.h>
+#include<string.h>
 
-#include <fstream>
-#include <vector>
+#include<fstream>
+#include<vector>
 #include "HybridAnomalyDetector.h"
 
 using namespace std;
@@ -23,25 +23,25 @@ public:
 	void readAndSave(string fileName){
         ofstream out(fileName);
         string s="";
-        while((s=read())!="done"){
+        while((s=read())!="done\n"){
             out<<s<<endl;
         }
         out.close();
     }
 };
 
-struct checksReport{
+struct ChecksReport{
     int start;
     int end;
     string description;
-    bool tp;
+    bool truePositive;
 };
 
 // you may add here helper classes
 struct AnomalyShared{
-    float threshold;
     vector<AnomalyReport> report;
-    vector<checksReport> checksReport;
+    vector<ChecksReport> checksReport;
+    float threshold;
     int testFileSize;
     AnomalyShared(){
         threshold = 0.9;
@@ -107,11 +107,11 @@ public:
         ad.learnNormal(train);
         sharedState->report = ad.detect(test);
 
-        checksReport checksRep;
+        ChecksReport checksRep;
         checksRep.start=0;
         checksRep.end=0;
         checksRep.description="";
-        checksRep.tp=false;
+        checksRep.truePositive=false;
         for_each(sharedState->report.begin(),sharedState->report.end(),[&checksRep,sharedState](AnomalyReport& anomalyRep){
             if(anomalyRep.timeStep == checksRep.end + 1 && anomalyRep.description == checksRep.description)
                 checksRep.end++;
@@ -149,11 +149,11 @@ public:
         return (ae>=bs && be>=as);
     }
 
-    bool isTP(int start, int end,AnomalyShared* sharedState){
+    bool isTruePositive(int start, int end, AnomalyShared* sharedState){
         for(size_t i=0;i<sharedState->checksReport.size();i++){
-            checksReport fr=sharedState->checksReport[i];
+            ChecksReport fr=sharedState->checksReport[i];
             if(CS(start, end, fr.start, fr.end)){
-                sharedState->checksReport[i].tp=true;
+                sharedState->checksReport[i].truePositive=true;
                 return true;
             }
         }
@@ -163,20 +163,20 @@ public:
     virtual void execute(AnomalyShared* sharedState){
 
         for(size_t i=0;i<sharedState->checksReport.size();i++){
-            sharedState->checksReport[i].tp=false;
+            sharedState->checksReport[i].truePositive=false;
         }
 
         dio->write("Please upload your local anomalies file.\n");
         string s = "";
         float truePositive=0, sum=0, positive=0;
-        while((s=dio->read())!="done"){
+        while((s=dio->read()) != "done\n"){
             size_t t=0;
             for(;s[t]!=',';t++);
             string st = s.substr(0, t);
             string en = s.substr(t+1, s.length());
             int start = stoi(st);
             int end = stoi(en);
-            if(isTP(start,end,sharedState))
+            if(isTruePositive(start, end, sharedState))
                 truePositive++;
             sum += end + 1 - start;
             positive++;
@@ -184,7 +184,7 @@ public:
         dio->write("Upload complete.\n");
         float falsePositive = 0;
         for(size_t i=0;i<sharedState->checksReport.size();i++)
-            if(!sharedState->checksReport[i].tp)
+            if(!sharedState->checksReport[i].truePositive)
                 falsePositive++;
         float N=sharedState->testFileSize - sum;
         float truePositiveRate= ((int)(1000.0 * truePositive / positive)) / 1000.0f;

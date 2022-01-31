@@ -3,8 +3,8 @@
 string serverIO::read(){
     char c = 0;
     string s = "";
-    while(c!='\n'){
-        recv(clientID,&c,sizeof(char),0);
+    while(c != '\n'){
+        recv(clientID, &c, sizeof(char), 0);
         s += c;
     }
     return s;
@@ -23,8 +23,7 @@ void serverIO::write(float f){
 }
 
 void serverIO::read(float* f){
-    //recv(clientID,f,sizeof(float),0);
-    // it will be already in the string line
+
 }
 
 Server::Server(int port)throw (const char*) {
@@ -44,15 +43,17 @@ Server::Server(int port)throw (const char*) {
 
 };
 
-void Server::start(ClientHandler& ch)throw(const char*){
+void Server::start(ClientHandler& ch) throw(const char*){
     t = new thread([&ch, this]() {
         while (!flag) {
             socklen_t clientSize = sizeof(client);
+            alarm(1);
             int aClient = accept(fileDescriptor, (struct sockaddr *) &client, &clientSize);
             if (aClient < 0)
                 throw "Accept failed";
             ch.handle(aClient);
             close(aClient);
+            alarm(0);
         }
         close(fileDescriptor);
     });
